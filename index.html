@@ -302,7 +302,7 @@
         , "timer", "short_pause"
         , "anti_sexual"
         , "speech_text_font_selector", "trans_text_font_selector", "trans_text2_font_selector"
-        , "speech_text_font", "trans_text_font", "trans_text2_font", /*"trans_text3_font" */];
+        , "speech_text_font", "trans_text_font", "trans_text2_font"];
 
     // 翻訳画面とURLを初期化 ///////////////
     document.getElementById('asr_frame').src = base_url;
@@ -340,7 +340,6 @@
         var speech_text_font_selector = document.getElementById('speech_text_font_selector').value;
         var trans_text_font_selector = document.getElementById('trans_text_font_selector').value;
         var trans_text2_font_selector = document.getElementById('trans_text2_font_selector').value;
-        var trans_text3_font_selector = document.getElementById('trans_text3_font_selector').value;
         console.log("フォントテキストエリア: " + speech_text_font_selector);
         if (speech_text_font_selector === "direct") {
             speech_text_font.disabled = false;
@@ -358,12 +357,6 @@
             trans_text2_font.disabled = false;
         } else {
             trans_text2_font.disabled = true;
-        }
-
-        if (trans_text3_font_selector === "direct") {
-            trans_text3_font.disabled = false;
-        } else {
-            trans_text3_font.disabled = true;
         }
 
         updateOptionValues();
