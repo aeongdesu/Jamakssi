@@ -1,0 +1,551 @@
+<!--
+    Jamakssi: jimakuChan fork
+-->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css?family=M+PLUS+Rounded+1c" rel="stylesheet">
+
+    <title>Jamakssi CONFIG</title>
+
+    <style type="text/css">
+        button,
+        input,
+        select,
+        textarea {
+            font-weight: 0;
+            vertical-align: top;
+            -webkit-text-stroke-color: rgb(21, 0, 141);
+            -webkit-text-stroke-width: 0px;
+        }
+
+        html {
+            height: 100%;
+            width: 100%;
+        }
+
+        body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        table.btm_table {
+            position: absolute;
+        }
+
+        table td {
+            overflow-wrap: break-word;
+        }
+    </style>
+
+    <style>
+        /* prepare the selectors to add a stroke to */
+
+        .stroke-single-imb {
+            /* position: absolute; */
+            left: 0;
+            right: 0;
+            margin: 0;
+            /* -webkit-text-stroke: 0px #0000FF;  */
+        }
+
+        .stroke-single-bg {
+            position: absolute;
+            left: 0;
+            right: 0;
+            margin: auto;
+            /* -webkit-text-stroke: 3px #FF0000;  */
+        }
+
+        /* add a single stroke */
+        .stroke-single-fg {
+            position: absolute;
+            left: 0;
+            right: 0;
+            margin: auto;
+            /* -webkit-text-stroke: 0px #FFFFFF; */
+        }
+    </style>
+
+</head>
+
+
+<body>
+
+    <!-- 메인 -->
+    <iframe src="" name="sample" width="100%" height="30%" id="asr_frame"></iframe>
+
+    위의 화면을 클릭하면 설정 화면이 닫히고 다시 누르면 다시 열립니다.<BR>
+    어떤건 실시간으로 적용이 안될 수도 있으니 새로고침을 가끔씩 해주세요!<BR>
+    <b>파파고는 CORS 이슈로 작동하려면 선작업이 필요합니다. <a target="_blank" href="https://github.com/aeongdesu/Jamakssi?tab=readme-ov-file#파파고-선작업">여기서 확인해주세요.</a></b><BR>
+    <HR>
+
+    <!-- 설정 임포트 -->
+    　<button onclick="saveSettings()">설정 내보내기</button>　
+    <button onclick="loadSettings()">설정 불러오기</button>　참고: 설정값을 바꿀때마다 브라우저 내에서 자동으로 저장됩니다.<BR>
+    <HR>
+
+    번역 서비스: <select id="transService" onchange="updateOptionValues()">
+        <option value="deeplx">DeepLX</option>
+        <option value="papago" selected>Papago</option>
+    </select>
+    　구글 번역 서비스는 <a target="_blank" href="https://sayonari.github.io/jimakuChan">원본을 사용해주세요.</a><br>
+    DeepLX API URL: <input id="deeplxURL"
+        oninput="updateOptionValues(only_url=(document.getElementById('transService').value === 'deeplx') ? false : true);"
+        /> ex) https://deeplx.doi9.top/translate
+    <HR>
+
+    <!-- # 背景の色 ############################## -->
+    　　　글꼴색 테두리색<BR>
+    인식 ： <input id="color1" type="color" value="#ffffff"
+        oninput="changeTextColor('fg',this.value,1); updateOptionValues(only_url=true)" />
+    <input id="st_color1" type="color" value="#000000"
+        oninput="changeTextColor('bg',this.value,1); updateOptionValues(only_url=true)" />
+
+    　　배경색：<input id="bgcolor" type="color" value="#00ff00"
+        oninput="document.getElementById('asr_frame').contentWindow.document.bgColor=this.value; changeTextColor('imb',this.value,1); updateOptionValues(only_url=true)" />
+
+    <BR>
+    번역1：<input id="color2" type="color" value="#ffffff"
+        oninput="changeTextColor('fg',this.value,2); updateOptionValues(only_url=true)" />
+    <input id="st_color2" type="color" value="#000000"
+        oninput="changeTextColor('bg',this.value,2); updateOptionValues(only_url=true)" /><BR>
+
+    번역2：<input id="color3" type="color" value="#ffffff"
+        oninput="changeTextColor('fg',this.value,3); updateOptionValues(only_url=true)" />
+    <input id="st_color3" type="color" value="#000000"
+        oninput="changeTextColor('bg',this.value,3); updateOptionValues(only_url=true)" /><BR>
+    <HR>
+
+    <!-- # テキストフォント ########################
+フォント名： <input type="text" name="font" id="font" size="60" oninput="document.getElementById('asr_frame').contentWindow.document.getElementById('result_text').style.fontFamily = getParam('font'); updateOptionValues()"><BR>
+         -->
+
+    <!-- # テキストサイズ ######################### -->
+    　　　　　　　크기　　　　　　　굵기　　　　　　　　　　테두리　<BR>
+    인식 ：
+    <input id="size1" type="range" value="25" min="0" max="40" step="0.1"
+        oninput="document.getElementById('asr_frame').contentWindow.document.getElementById('speech_text').style.fontSize = this.value + 'pt'; document.getElementById('text_size_view1').innerHTML=this.value; updateOptionValues(only_url=true)" />
+    <span id="text_size_view1">25</span>px
+
+    <input id="weight1" type="range" value="900" min="100" max="900" step="100"
+        oninput="document.getElementById('asr_frame').contentWindow.document.getElementById('speech_text').style.fontWeight = this.value; document.getElementById('text_weight_view1').innerHTML=this.value; updateOptionValues(only_url=true)" />
+    <span id="text_weight_view1">900</span>
+
+    <input id="st_width1" type="range" value="6" min="0" max="20" step="0.1"
+        oninput="setTextBorder(this.value,1); document.getElementById('text_st_size_view1').innerHTML=this.value; updateOptionValues(only_url=true)" />
+    <span id="text_st_size_view1">6</span>pt
+    <BR>
+
+    번역1：
+    <input id="size2" type="range" value="25" min="0" max="40" step="0.1"
+        oninput="document.getElementById('asr_frame').contentWindow.document.getElementById('trans_text').style.fontSize = this.value + 'pt'; document.getElementById('text_size_view2').innerHTML=this.value; updateOptionValues(only_url=true)" />
+    <span id="text_size_view2">25</span>px
+
+    <input id="weight2" type="range" value="900" min="100" max="900" step="100"
+        oninput="document.getElementById('asr_frame').contentWindow.document.getElementById('trans_text').style.fontWeight = this.value; document.getElementById('text_weight_view2').innerHTML=this.value; updateOptionValues(only_url=true)" />
+    <span id="text_weight_view2">900</span>
+
+    <input id="st_width2" type="range" value="6" min="0" max="20" step="0.1"
+        oninput="setTextBorder(this.value,2); document.getElementById('text_st_size_view2').innerHTML=this.value; updateOptionValues(only_url=true)" />
+    <span id="text_st_size_view2">6</span>pt
+    <BR>
+
+    번역2：
+    <input id="size3" type="range" value="25" min="0" max="40" step="0.1"
+        oninput="document.getElementById('asr_frame').contentWindow.document.getElementById('trans_text2').style.fontSize = this.value + 'pt'; document.getElementById('text_size_view3').innerHTML=this.value; updateOptionValues(only_url=true)" />
+    <span id="text_size_view3">25</span>px
+
+    <input id="weight3" type="range" value="900" min="100" max="900" step="100"
+        oninput="document.getElementById('asr_frame').contentWindow.document.getElementById('trans_text2').style.fontWeight = this.value; document.getElementById('text_weight_view3').innerHTML=this.value; updateOptionValues(only_url=true)" />
+    <span id="text_weight_view3">900</span>
+
+    <input id="st_width3" type="range" value="6" min="0" max="20" step="0.1"
+        oninput="setTextBorder(this.value,3); document.getElementById('text_st_size_view3').innerHTML=this.value; updateOptionValues(only_url=true)" />
+    <span id="text_st_size_view3">6</span>pt
+    <BR>
+
+    <HR>
+    텍스트 위치：　
+    좌우：
+    <select id="textAlign" onchange="updateOptionValues()">
+        <option value="left">왼쪽</option>
+        <option value="center" selected>가운데</option>
+        <option value="right">오른쪽</option>
+    </select>
+
+    　상하：
+    <select id="v_align" onchange="updateOptionValues()">
+        <option value="top">위쪽</option>
+        <option value="bottom" selected>아래쪽</option>
+    </select><BR>
+
+    <!-- # テキストの改行 ######################### -->
+    줄바꿈：
+    <select id="whiteSpace" onchange="updateOptionValues()">
+        <option value="nowrap">안함</option>
+        <option value="" selected>화면 끝에서 줄바꿈</option>
+    </select><BR>
+    <HR>
+
+    <!-- # テキスト表示項目 ####################### -->
+    인식 언어　：
+    <select id="recog" onchange="updateOptionValues(only_url=false);">
+        <option value="en">English</option>
+        <option value="ko" selected>한국어</option>
+        <option value="ja">日本語</option>
+    </select>　　
+
+    폰트　：
+    <select name="speech_text_font_selector" id="speech_text_font_selector"
+        onchange="document.getElementById('asr_frame').contentWindow.document.getElementById('speech_text').style.fontFamily = this.value; selectFont();">
+        <option value="direct">[로컬 폰트]</option>
+        <option value="NanumSquareRound" selected>NanumSquareRound</option>
+        <option value="M PLUS Rounded\ 1c">M PLUS Rounded 1c</option>
+    </select>　
+    로컬 폰트：<input type="text" name="speech_text_font" id="speech_text_font" size="30"
+        oninput="document.getElementById('asr_frame').contentWindow.document.getElementById('speech_text').style.fontFamily = this.value; updateOptionValues();"
+        disabled /><br>
+
+
+    번역1 언어　：
+    <select id="trans" onchange="updateOptionValues(only_url=false);">
+        <option value="none">X</option>
+        <option value="en">English</option>
+        <option value="ko">한국어</option>
+        <option value="ja" selected>日本語</option>
+    </select>　
+
+    폰트　：
+    <select name="trans_text_font_selector" id="trans_text_font_selector"
+        onchange="document.getElementById('asr_frame').contentWindow.document.getElementById('trans_text').style.fontFamily = this.value; selectFont();">
+        <option value="direct">[로컬 폰트]</option>
+        <option value="NanumSquareRound">NanumSquareRound</option>
+        <option value="M PLUS Rounded\ 1c" selected>M PLUS Rounded 1c</option>
+    </select>　
+    로컬 폰트：<input type="text" name="trans_text_font" id="trans_text_font" size="30"
+        oninput="document.getElementById('asr_frame').contentWindow.document.getElementById('trans_text').style.fontFamily = this.value; updateOptionValues();"
+        disabled /><br>
+
+
+    번역2 언어　：
+    <select id="trans2" onchange="updateOptionValues(only_url=false);">
+        <option value="none" selected>X</option>
+        <option value="en">영어</option>
+        <option value="ko">한국어</option>
+        <option value="ja">日本語</option>
+    </select>　　
+
+    폰트　：
+    <select name="trans_text2_font_selector" id="trans_text2_font_selector"
+        onchange="document.getElementById('asr_frame').contentWindow.document.getElementById('trans_text2').style.fontFamily = this.value; selectFont();">
+        <option value="direct">[로컬 폰트]</option>
+        <option value="NanumSquareRound">NanumSquareRound</option>
+        <option value="M PLUS Rounded\ 1c" selected>M PLUS Rounded 1c</option>
+    </select>　
+    로컬 폰트：<input type="text" name="trans_text2_font" id="trans_text2_font" size="30"
+        oninput="document.getElementById('asr_frame').contentWindow.document.getElementById('trans_text2').style.fontFamily = this.value; updateOptionValues();"
+        disabled /><br>
+    <HR>
+
+    <!-- # テキスト表示を●秒後に消す ######################### -->
+    언제 텍스트를 지울까요?　　：　
+    <input type="text" name="timer" id="timer" size="10" oninput="updateOptionValues();" />ms 후 (1000ms = 1초)<BR>
+
+    <!-- # 文の終わり ######################### -->
+    언제 텍스트를 구분시킬까요?：　
+    <input type="text" name="short_pause" value="750" id="short_pause" size="10"
+        oninput="updateOptionValues();" />ms 후 (1000ms = 1초, 기본값 750)<BR>
+    (기본값으로도 충분합니다)<BR>
+    <HR>
+
+    <!-- # センシティブワード対応する！ ######################### -->
+    - 민감한 단어 검열 <b><font color="red">끄기</font></b>：<input type="checkbox" id="anti_sexual"
+        onchange="updateOptionValues()"> <BR>
+    <HR>
+
+    <!-- # dummy 見えない数字 ############################## -->
+    <input style="display: none;" type="text" name="frame_height" id="frame_height" value="30%" size="10"
+        oninput="updateOptionValues();" />
+
+
+    </div>
+</body>
+
+
+
+
+
+<!-- # スクリプト ########################################### -->
+
+<!-- # 字幕ちゃん設定項目のロードと，画面への反映 ############################## -->
+<script type="text/javascript">
+    const currentURL = window.location.origin + window.location.pathname;
+    let base_url = currentURL.replace("index.html", "");
+    base_url += "main.html?";
+    base_url = base_url.replace("??", "?");
+
+
+    // config 値　一覧 ////////////////
+    config_values = ["transService", "deeplxURL", "textAlign", "v_align", "whiteSpace", "bgcolor", "frame_height"
+        , "recog", "size1", "weight1", "color1", "st_color1", "st_width1"
+        , "trans", "size2", "weight2", "color2", "st_color2", "st_width2"
+        , "trans2", "size3", "weight3", "color3", "st_color3", "st_width3"
+        , "timer", "short_pause"
+        , "anti_sexual"
+        , "speech_text_font_selector", "trans_text_font_selector", "trans_text2_font_selector"
+        , "speech_text_font", "trans_text_font", "trans_text2_font", /*"trans_text3_font" */];
+
+    // 翻訳画面とURLを初期化 ///////////////
+    document.getElementById('asr_frame').src = base_url;
+    // document.getElementById('url').innerHTML = base_url;
+
+
+    // 設定の復元 ////////////////////
+    const config = JSON.parse(localStorage.jimakuChan_config || '{}');
+    for (const p of config_values) {
+        if (config[p] != null) document.getElementById(p).value = config[p];
+    }
+    for (var i = 0; i < 3; i++) {
+        if (config['size' + String(i + 1)] != null) document.getElementById('text_size_view' + String(i + 1)).innerHTML = config['size' + String(i + 1)];
+        if (config['weight' + String(i + 1)] != null) document.getElementById('text_weight_view' + String(i + 1)).innerHTML = config['weight' + String(i + 1)];
+        if (config['st_width' + String(i + 1)] != null) document.getElementById('text_st_size_view' + String(i + 1)).innerHTML = config['st_width' + String(i + 1)];
+    }
+    if (config['anti_sexual'] !== null && config['anti_sexual'] !== undefined) {
+        document.getElementById('anti_sexual').checked = config['anti_sexual'];
+    }
+    if (config['frame_height'] !== null && config['frame_height'] !== undefined) {
+        var iframe = document.getElementById('asr_frame');
+        var body = document.body;
+        iframe.style.height = config['frame_height'];
+
+        if (config['frame_height'] === '100%') {
+            body.style.overflow = 'hidden';  // ページスクロールを禁止する
+        } else {
+            body.style.overflow = 'auto';  // ページスクロールを有効にする
+        }
+    }
+
+
+    // フォントの直接入力の場合，テキストフィールドを有効化 ////////////////////
+    function selectFont() {
+        var speech_text_font_selector = document.getElementById('speech_text_font_selector').value;
+        var trans_text_font_selector = document.getElementById('trans_text_font_selector').value;
+        var trans_text2_font_selector = document.getElementById('trans_text2_font_selector').value;
+        var trans_text3_font_selector = document.getElementById('trans_text3_font_selector').value;
+        console.log("フォントテキストエリア: " + speech_text_font_selector);
+        if (speech_text_font_selector === "direct") {
+            speech_text_font.disabled = false;
+        } else {
+            speech_text_font.disabled = true;
+        }
+
+        if (trans_text_font_selector === "direct") {
+            trans_text_font.disabled = false;
+        } else {
+            trans_text_font.disabled = true;
+        }
+
+        if (trans_text2_font_selector === "direct") {
+            trans_text2_font.disabled = false;
+        } else {
+            trans_text2_font.disabled = true;
+        }
+
+        if (trans_text3_font_selector === "direct") {
+            trans_text3_font.disabled = false;
+        } else {
+            trans_text3_font.disabled = true;
+        }
+
+        updateOptionValues();
+    }
+
+    // URLに付けるオプションの値をアップデート //////////
+    function updateOptionValues(only_url = false) {
+        for (const p of config_values) {
+            eval("var " + p + " = document.getElementById('" + p + "').value;");
+        }
+        var anti_sexual = document.getElementById('anti_sexual').checked;
+
+        var new_url = base_url + "textAlign=" + textAlign + "&v_align=" + v_align
+            + "&recog=" + recog
+            + "&bgcolor=" + bgcolor
+
+            + "&size1=" + size1 + "&weight1=" + weight1 + "&color1=" + color1
+            + "&st_color1=" + st_color1 + "&st_width1=" + st_width1
+
+            + "&size2=" + size2 + "&weight2=" + weight2 + "&color2=" + color2
+            + "&st_color2=" + st_color2 + "&st_width2=" + st_width2
+
+            + "&size3=" + size3 + "&weight3=" + weight3 + "&color3=" + color3
+            + "&st_color3=" + st_color3 + "&st_width3=" + st_width3
+        if (whiteSpace != '') { new_url = new_url + "&whiteSpace=" + whiteSpace; }
+        if (trans != 'none') { new_url = new_url + "&trans=" + trans; }
+        if (trans2 != 'none') { new_url = new_url + "&trans2=" + trans2; }
+
+        // font の処理
+        if (speech_text_font_selector !== "direct") {
+            speech_text_font = speech_text_font_selector;
+        }
+        if (trans_text_font_selector !== "direct") {
+            trans_text_font = trans_text_font_selector;
+        }
+        if (trans_text2_font_selector !== "direct") {
+            trans_text2_font = trans_text2_font_selector;
+        }
+        if (speech_text_font != '') { new_url = new_url + "&speech_text_font=" + speech_text_font; }
+        if (trans_text_font != '') { new_url = new_url + "&trans_text_font=" + trans_text_font; }
+        if (trans_text2_font != '') { new_url = new_url + "&trans_text2_font=" + trans_text2_font; }
+
+        if (timer != '') { new_url = new_url + "&timer=" + timer; }
+        if (short_pause != '') { new_url = new_url + "&short_pause=" + short_pause; }
+
+        if (anti_sexual == true) { new_url = new_url + "&anti_sexual=" + "false"; }
+        if (transService != '') { new_url = new_url + "&transService=" + transService; }
+        if (deeplxURL != '') { new_url = new_url + "&deeplx_url=" + deeplxURL; }
+
+        // config の更新
+        for (const p of config_values) {
+            config[p] = eval(p);
+        }
+
+        // 設定の保存
+        localStorage.jimakuChan_config = JSON.stringify(config);
+
+        // 認識ちゃん画面の更新 ///////
+        if (only_url == false) {
+            document.getElementById('asr_frame').src = new_url;
+        }
+
+        // document.getElementById('url').innerHTML = new_url;
+        // document.getElementById('open_link').href = new_url;
+
+        return 0;
+    }
+    updateOptionValues()
+
+
+    // テキストの色変え ---------------------------
+    function changeTextColor(type, color, id) {
+        var text_layer = ['fg', 'bg', 'imb'];
+        var lang_line = ['speech_text', 'trans_text', 'trans_text2'];
+
+        if (type == "fg") { document.getElementById('asr_frame').contentWindow.document.getElementById(lang_line[id - 1] + '-' + type).style.color = color; }
+        else { document.getElementById('asr_frame').contentWindow.document.getElementById(lang_line[id - 1] + '-' + type).style.webkitTextStrokeColor = color; }
+
+        // type が imb の場合は，全てのlang_lineに反映
+        if (type == "imb") {
+            for (const ll of lang_line) {
+                document.getElementById('asr_frame').contentWindow.document.getElementById(ll + '-' + type).style.webkitTextStrokeColor = color;
+                document.getElementById('asr_frame').contentWindow.document.getElementById(ll + '-' + type).style.color = color;
+            }
+        }
+    }
+
+    function setTextBorder(width, id) {
+        var lang_line = ['speech_text', 'trans_text', 'trans_text2'];
+
+        document.getElementById('asr_frame').contentWindow.document.getElementById(lang_line[id - 1] + "-bg").style.webkitTextStrokeWidth = width + 'pt';
+        document.getElementById('asr_frame').contentWindow.document.getElementById(lang_line[id - 1] + "-imb").style.webkitTextStrokeWidth = width + 'pt';
+    }
+
+    function changeText(text, id) {
+        var text_layer = ['fg', 'bg', 'imb'];
+        var lang_line = ['speech_text', 'trans_text', 'trans_text2'];
+
+        for (const tl of text_layer) {
+            document.getElementById('asr_frame').contentWindow.document.getElementById(ll[id - 1] + '-' + tl).innerHTML = text;
+        }
+    }
+
+</script>
+
+<!-- # 設定ファイルの保存と読込 ############################## -->
+<script>
+
+    // Save LocalStorage settings to a file
+    function saveSettings() {
+        const settings = localStorage.jimakuChan_config;
+        if (!settings) {
+            alert('No settings found to save!');
+            return;
+        }
+        const blob = new Blob([settings], { type: 'text/plain' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'jimakuChan_settings.json';
+        link.click();
+        URL.revokeObjectURL(link.href);
+    }
+
+    // Load LocalStorage settings from a file
+    function loadSettings() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.onchange = e => {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function (readEvent) {
+                try {
+                    const settings = JSON.parse(readEvent.target.result);
+                    localStorage.jimakuChan_config = JSON.stringify(settings);
+                    // reload
+                    location.reload();
+                } catch (error) {
+                    alert('Failed to load settings: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+        };
+        input.click();
+    }
+
+</script>
+
+
+<!-- # iframeの高さを切り替える　############################ -->
+<script>
+    function toggleIframeHeight() {
+        console.log("toggleIframeHeight");
+        var iframe = document.getElementById('asr_frame');
+        var body = document.body;
+
+        // ページのスクロール位置を一番上に戻す
+        window.scrollTo(0, 0);
+
+        if (iframe.style.height === '100%') {
+            iframe.style.height = '30%';
+            body.style.overflow = 'auto';  // ページスクロールを有効にする
+        } else {
+            iframe.style.height = '100%';
+            body.style.overflow = 'hidden';  // ページスクロールを禁止する
+        }
+
+        document.getElementById('frame_height').value = iframe.style.height;
+        updateOptionValues();
+    }
+</script>
+
+<!-- iframeの高さを自動調整する -->
+<script>
+    window.addEventListener('load', function () {
+        var iframe = document.getElementById('asr_frame'); // iframeのIDに置き換えてください
+        var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+        iframeDoc.addEventListener('click', function () {
+            // ここにクリックされた時の処理を書く
+            toggleIframeHeight(); // 高さを切り替える関数を呼び出す
+        });
+    });
+</script>
+
+</html>
