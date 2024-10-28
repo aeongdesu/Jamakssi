@@ -4,8 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <link href="https://fonts.googleapis.com/css?family=M+PLUS+Rounded+1c" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
-
 
     <title>Jamakssi: jimakuChan fork</title>
 
@@ -96,7 +94,6 @@
         }
     </style>
 
-    <script src="papago.js"></script>
     <script>
         // URLパラメータ取得用関数 ---------------------------
         function getParam(name, url) {
@@ -148,6 +145,7 @@
         var trans2_destlang = '';
 
         var transService = getParam('transService');
+        var papagoURL = getParam('papago_url');
         var deeplxURL = getParam('deeplx_url');
         var gas_key = getParam('gas_key');
 
@@ -339,10 +337,10 @@
                         setTimeout(fn_del, timer);
                     }
 
-                    if (deeplxURL != null && transService === "deeplx") {
+                    if (deeplxURL != null || papagoURL != null) {
                         // 翻訳1言語目
                         if (arg_trans != null) {
-                            const trans1 = await fetch(deeplxURL, {
+                            const trans1 = await fetch(transService === "papago" ? papagoURL : deeplxURL, {
                                 method: "POST",
                                 headers: {
                                     "Content-Type": "application/json"
@@ -372,7 +370,7 @@
                         }
 
                         if (arg_trans2 != null) {
-                            const trans2 = await fetch(deeplxURL, {
+                            const trans2 = await fetch(transService === "papago" ? papagoURL : deeplxURL, {
                                 method: "POST",
                                 headers: {
                                     "Content-Type": "application/json"
@@ -400,39 +398,6 @@
                                 }
                             }
                         }
-
-                    } else if (transService === "papago") {
-                        if (arg_trans != null) {
-                                var responseText1 = await papago_translate(recog_text, trans_sourcelang, trans_destlang);
-                                document.getElementById('speech_text-imb').innerHTML = recog_text;
-                                document.getElementById('speech_text-bg').innerHTML = recog_text;
-                                document.getElementById('speech_text-fg').innerHTML = recog_text;
-                                document.getElementById('trans_text-imb').innerHTML = responseText1;
-                                document.getElementById('trans_text-bg').innerHTML = responseText1;
-                                document.getElementById('trans_text-fg').innerHTML = responseText1;
-                                isTextTranslation1Complete = true; // フラグを更新
-
-                                // すべての処理が完了した後に内容を消す
-                                if (timer != null && shouldClearText()) {
-                                    setTimeout(fn_del, timer);
-                                }
-                        }
-                        if (arg_trans2 != null) {
-                                var responseText2 = await papago_translate(recog_text, trans_sourcelang, trans2_destlang);
-                                document.getElementById('speech_text-imb').innerHTML = recog_text;
-                                document.getElementById('speech_text-bg').innerHTML = recog_text;
-                                document.getElementById('speech_text-fg').innerHTML = recog_text;
-                                document.getElementById('trans_text2-imb').innerHTML = responseText2;
-                                document.getElementById('trans_text2-bg').innerHTML = responseText2;
-                                document.getElementById('trans_text2-fg').innerHTML = responseText2;
-                                isTextTranslation2Complete = true; // フラグを更新
-
-                                // すべての処理が完了した後に内容を消す
-                                if (timer != null && shouldClearText()) {
-                                    setTimeout(fn_del, timer);
-                                }
-                        }
-
                     } else {
                         document.getElementById('speech_text-imb').innerHTML = recog_text;
                         document.getElementById('speech_text-bg').innerHTML = recog_text;

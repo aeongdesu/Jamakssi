@@ -84,8 +84,7 @@
     <iframe src="" name="sample" width="100%" height="30%" id="asr_frame"></iframe>
 
     위의 화면을 클릭하면 설정 화면이 닫히고 다시 누르면 다시 열립니다.<BR>
-    어떤건 실시간으로 적용이 안될 수도 있으니 새로고침을 가끔씩 해주세요!<BR>
-    <b>파파고는 CORS 이슈로 작동하려면 선작업이 필요합니다. <a target="_blank" href="https://github.com/aeongdesu/Jamakssi?tab=readme-ov-file#파파고-선작업">여기서 확인해주세요.</a></b><BR>
+    어떤건 실시간으로 적용이 안될 수도 있으니 새로고침을 가끔씩 해주세요! (ex: 번역 서비스)<BR>
     <HR>
 
     <!-- 설정 임포트 -->
@@ -98,9 +97,12 @@
         <option value="papago" selected>Papago</option>
     </select>
     　구글 번역 서비스는 <a target="_blank" href="https://sayonari.github.io/jimakuChan">원본을 사용해주세요.</a><br>
+    Papago Proxy URL: <input id="papagoURL"
+        oninput="updateOptionValues(only_url=(document.getElementById('transService').value === 'papago') ? false : true);" />
+    ex) https://paproxy.example.org/<br>
     DeepLX API URL: <input id="deeplxURL"
-        oninput="updateOptionValues(only_url=(document.getElementById('transService').value === 'deeplx') ? false : true);"
-        /> ex) https://deeplx.doi9.top/translate
+        oninput="updateOptionValues(only_url=(document.getElementById('transService').value === 'deeplx') ? false : true);" />
+    ex) https://deeplx.doi9.top/translate
     <HR>
 
     <!-- # 背景の色 ############################## -->
@@ -262,14 +264,15 @@
 
     <!-- # 文の終わり ######################### -->
     언제 텍스트를 구분시킬까요?：　
-    <input type="text" name="short_pause" value="750" id="short_pause" size="10"
-        oninput="updateOptionValues();" />ms 후 (1000ms = 1초, 기본값 750)<BR>
+    <input type="text" name="short_pause" value="750" id="short_pause" size="10" oninput="updateOptionValues();" />ms 후
+    (1000ms = 1초, 기본값 750)<BR>
     (기본값으로도 충분합니다)<BR>
     <HR>
 
     <!-- # センシティブワード対応する！ ######################### -->
-    - 민감한 단어 검열 <b><font color="red">끄기</font></b>：<input type="checkbox" id="anti_sexual"
-        onchange="updateOptionValues()"> <BR>
+    - 민감한 단어 검열 <b>
+        <font color="red">끄기</font>
+    </b>：<input type="checkbox" id="anti_sexual" onchange="updateOptionValues()"> <BR>
     <HR>
 
     <!-- # dummy 見えない数字 ############################## -->
@@ -295,7 +298,7 @@
 
 
     // config 値　一覧 ////////////////
-    config_values = ["transService", "deeplxURL", "textAlign", "v_align", "whiteSpace", "bgcolor", "frame_height"
+    config_values = ["transService", "papagoURL", "deeplxURL", "textAlign", "v_align", "whiteSpace", "bgcolor", "frame_height"
         , "recog", "size1", "weight1", "color1", "st_color1", "st_width1"
         , "trans", "size2", "weight2", "color2", "st_color2", "st_width2"
         , "trans2", "size3", "weight3", "color3", "st_color3", "st_width3"
@@ -404,6 +407,7 @@
 
         if (anti_sexual == true) { new_url = new_url + "&anti_sexual=" + "false"; }
         if (transService != '') { new_url = new_url + "&transService=" + transService; }
+        if (papagoURL != '') { new_url = new_url + "&papago_url=" + papagoURL; }
         if (deeplxURL != '') { new_url = new_url + "&deeplx_url=" + deeplxURL; }
 
         // config の更新
